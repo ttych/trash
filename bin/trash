@@ -1,0 +1,64 @@
+#!/bin/sh
+# -*- mode: sh -*-
+
+trash_help()
+{
+    cat <<EOF
+Usage is:
+    $0 [-h] [-D] <action> <action_parameters>
+
+with action in:
+    help
+    gc
+    rm
+EOF
+}
+
+trash_gc()
+{
+    :
+    #FIXME
+}
+
+trash_rm()
+{
+    :
+    # FIXME
+}
+
+trash()
+{
+    trash=
+    trash__action=
+    while getopts :hD opt; do
+        case $opt in
+            h) trash_help
+               exit 0
+               ;;
+            D) set -x ;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    case $1 in
+        help|gc)
+            trash__action="trash_${1}"
+            shift
+            ;;
+        "")
+            trash__action="trash_rm"
+            ;;
+        *)
+            echo >&2 "unknown action \"$1\""
+            trash_help
+            exit 1
+            ;;
+    esac
+    $trash__action "$@"
+}
+
+case "$0" in
+    */trash)
+        trash "$@"
+        ;;
+esac
