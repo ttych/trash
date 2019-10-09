@@ -13,7 +13,7 @@ dbg()
 if [ -z "$TRASH_DIR" ]; then
     TRASH_DIR="${HOME_ALT:-$HOME}/.trash"
 fi
-TRASH_GC_TIME="${TRASH_GC_TIME:-30}"
+TRASH_GC_TIME="${TRASH_GC_TIME:-60}"
 TRASH_GC_PATTERN='%*_*_[1-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]_[0-2][0-9][0-6][0-9][0-6][0-9]'
 
 trash_help()
@@ -32,8 +32,15 @@ EOF
 trash_gc()
 {
     # find "$TRASH_DIR" -name '%*_[0-9][0-9]*' -ctime +"$TRASH_GC_TIME" -print
-    find "$TRASH_DIR" -name "$TRASH_GC_PATTERN"  -print
-    #FIXME
+    find "$TRASH_DIR" -name "$TRASH_GC_PATTERN" -ctime +"$TRASH_GC_TIME" -print | while read trash_gc__file; do
+        echo "rm -Rf \"$trash_gc__file\""
+        rm -Rf "$trash_gc__file"
+    done
+}
+
+trash_list()
+{
+    find "$TRASH_DIR" -name "$TRASH_GC_PATTERN" -print
 }
 
 trash_rm()
@@ -85,6 +92,10 @@ trash()
         gc|garbage|purge)
             shift
             trash_gc "$@"
+            ;;
+        l|list)
+            shift
+            trash_list "$@"
             ;;
         *)
             trash_rm "$@"
