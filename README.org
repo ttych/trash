@@ -1,0 +1,12 @@
+* trash
+
+move file to a temporary space where it can be garbage later on
+... or restored.
+
+** actions
+
+possibles actions are :
+- help
+- rm (default one)
+- gc, garbage collect old trashed files/directory
+- restore (to be implemented)
